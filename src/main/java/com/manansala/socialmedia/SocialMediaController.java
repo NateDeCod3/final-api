@@ -3,6 +3,7 @@ package com.manansala.socialmedia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -10,44 +11,44 @@ import java.util.List;
 public class SocialMediaController {
 
     @Autowired
-    private SocialMediaRepository socialMediaRepository;
+    private SocialMediaRepository repository;
 
     @GetMapping
     public ResponseEntity<List<SocialMedia>> getAllPosts() {
-        return ResponseEntity.ok(socialMediaRepository.findAll());
+        return ResponseEntity.ok(repository.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<SocialMedia> createPost(@RequestBody SocialMedia post) {
-        return ResponseEntity.ok(socialMediaRepository.save(post));
+    public ResponseEntity<SocialMedia> createPost(@Valid @RequestBody SocialMedia post) {
+        return ResponseEntity.ok(repository.save(post));
     }
 
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String keyword) {
-        return ResponseEntity.ok(socialMediaRepository
+        return ResponseEntity.ok(repository
             .findByTitleContainingOrDescriptionContaining(keyword, keyword));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SocialMedia> updatePost(
             @PathVariable Long id,
-            @RequestBody SocialMedia updatedPost) {
-        return socialMediaRepository.findById(id)
+            @Valid @RequestBody SocialMedia updatedPost) {
+        return repository.findById(id)
             .map(post -> {
                 post.setTitle(updatedPost.getTitle());
                 post.setDescription(updatedPost.getDescription());
                 post.setMediaUrl(updatedPost.getMediaUrl());
-                return ResponseEntity.ok(socialMediaRepository.save(post));
+                return ResponseEntity.ok(repository.save(post));
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
-        return socialMediaRepository.findById(id)
+        return repository.findById(id)
             .map(post -> {
-                socialMediaRepository.delete(post);
-                return ResponseEntity.ok().build();
+                repository.delete(post);
+                return ResponseEntity.noContent().build();
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
