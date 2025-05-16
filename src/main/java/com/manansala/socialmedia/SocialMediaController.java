@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -33,6 +33,8 @@ public class SocialMediaController {
 
     @PostMapping
     public ResponseEntity<SocialMedia> createPost(@Valid @RequestBody SocialMedia post) {
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(LocalDateTime.now());
         return ResponseEntity.ok(repository.save(post));
     }
 
@@ -55,6 +57,7 @@ public class SocialMediaController {
                 post.setTitle(updatedPost.getTitle());
                 post.setDescription(updatedPost.getDescription());
                 post.setMediaUrl(updatedPost.getMediaUrl());
+                post.setUpdatedAt(LocalDateTime.now());
                 return ResponseEntity.ok(repository.save(post));
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
