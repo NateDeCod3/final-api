@@ -32,8 +32,9 @@ public class SocialMediaController {
 
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String keyword) {
+        String lowerCaseKeyword = keyword.toLowerCase();
         return ResponseEntity.ok(repository
-            .findByTitleContainingOrDescriptionContaining(keyword, keyword));
+            .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(lowerCaseKeyword, lowerCaseKeyword));
     }
 
     @PutMapping("/{id}")
