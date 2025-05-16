@@ -8,48 +8,52 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/manansala") // ✅ Ensuring `/manansala` is applied to all routes
-@CrossOrigin(origins = "https://final-ui-iw0x.onrender.com") // ✅ Global CORS setting
+@RequestMapping("/manansala")
 public class SocialMediaController {
 
     @Autowired
     private SocialMediaRepository socialMediaRepository;
 
-    // Get all posts
     @GetMapping("/posts")
     public ResponseEntity<List<SocialMedia>> getAllPosts() {
         return ResponseEntity.ok(socialMediaRepository.findAll());
     }
 
-    // Create a new post
-    @PostMapping("/post")
+    @PostMapping("/posts")
     public ResponseEntity<SocialMedia> addNewPost(@RequestBody SocialMedia post) {
         return ResponseEntity.ok(socialMediaRepository.save(post));
     }
 
-    // Update a post
-    @PutMapping("/posts/{id}")
-    public ResponseEntity<String> editPost(@PathVariable Long id, @RequestBody SocialMedia updatedPost) {
-        Optional<SocialMedia> post = socialMediaRepository.findById(id);
-        if (!post.isPresent()) {
-            return ResponseEntity.badRequest().body("Post not found");
-        }
-
-        post.get().setTitle(updatedPost.getTitle());
-        post.get().setDescription(updatedPost.getDescription());
-        post.get().setMediaUrl(updatedPost.getMediaUrl());
-        socialMediaRepository.save(post.get());
-
-        return ResponseEntity.ok("Post updated successfully!");
+    @PostMapping("/bulk-posts")
+    public ResponseEntity<List<SocialMedia>> addBulkPosts(@RequestBody List<SocialMedia> posts) {
+        return ResponseEntity.ok(socialMediaRepository.saveAll(posts));
     }
 
-    // Delete a post
+    @GetMapping("/posts/search/{key}")
+    public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String key) {
+        return ResponseEntity.ok(socialMediaRepository
+            .findByTitleContainingOrDescriptionContaining(key, key));
+    }
+
+    @PutMapping("/posts/{id}")
+    public ResponseEntity<SocialMedia> editPost(@PathVariable Long id, @RequestBody SocialMedia updatedPost) {
+        return socialMediaRepository.findById(id)
+            .map(post -> {
+                post.setTitle(updatedPost.getTitle());
+                post.setDescription(updatedPost.getDescription());
+                post.setMediaUrl(updatedPost.getMediaUrl());
+                return ResponseEntity.ok(socialMediaRepository.save(post));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id) {
-        if (!socialMediaRepository.existsById(id)) {
-            return ResponseEntity.badRequest().body("Post not found");
-        }
-        socialMediaRepository.deleteById(id);
-        return ResponseEntity.ok("Post deleted successfully!");
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        return socialMediaRepository.findById(id)
+            .map(post -> {
+                socialMediaRepository.delete(post);
+                return ResponseEntity.ok().build();
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
