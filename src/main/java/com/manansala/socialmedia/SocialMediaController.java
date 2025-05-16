@@ -18,6 +18,13 @@ public class SocialMediaController {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<SocialMedia> getPostById(@PathVariable Long id) {
+        return repository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping
     public ResponseEntity<SocialMedia> createPost(@Valid @RequestBody SocialMedia post) {
         return ResponseEntity.ok(repository.save(post));
