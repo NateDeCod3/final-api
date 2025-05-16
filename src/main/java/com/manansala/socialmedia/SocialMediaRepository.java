@@ -6,5 +6,5 @@ import java.util.List;
 
 @Repository
 public interface SocialMediaRepository extends JpaRepository<SocialMedia, Long> {
-    List<SocialMedia> findByTitleContainingOrDescriptionContaining(String title, String description);
+    List<SocialMedia> findByTitleOrDescription(String title, String description);
 }
