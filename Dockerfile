@@ -1,23 +1,20 @@
-# Use official OpenJDK base image
-FROM eclipse-temurin:17-jdk-jammy
-
-# Set working directory
+# Build stage
+FROM gradle:7.4.2-jdk17-alpine AS build
 WORKDIR /app
 
-# Copy build files
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradlew .
-COPY gradle gradle
+# Copy gradle files first for caching
+COPY build.gradle settings.gradle gradlew /app/
+COPY gradle /app/gradle
+RUN ./gradlew dependencies
 
-# Copy source code
-COPY src src
-
-# Build the application
+# Copy source and build
+COPY src /app/src
 RUN ./gradlew build --no-daemon
 
-# Expose the port your app runs on
-EXPOSE 8080
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar /app/app.jar
 
-# Command to run the application
-CMD ["java", "-jar", "build/libs/your-backend-app.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
