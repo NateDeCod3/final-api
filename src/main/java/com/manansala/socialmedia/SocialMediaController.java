@@ -1,6 +1,9 @@
 package com.manansala.socialmedia;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
@@ -14,8 +17,11 @@ public class SocialMediaController {
     private SocialMediaRepository repository;
 
     @GetMapping
-    public ResponseEntity<List<SocialMedia>> getAllPosts() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<Page<SocialMedia>> getAllPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(repository.findAll(pageable));
     }
 
     @GetMapping("/{id}")
@@ -31,9 +37,13 @@ public class SocialMediaController {
     }
 
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String keyword) {
+    public ResponseEntity<Page<SocialMedia>> searchPosts(
+            @PathVariable String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(repository
-            .findByTitleOrDescription(keyword, keyword));
+            .findByTitleContainingOrDescriptionContaining(keyword, keyword, pageable));
     }
 
     @PutMapping("/{id}")
