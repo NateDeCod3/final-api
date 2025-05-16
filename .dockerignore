@@ -1,4 +1,8 @@
-target/
-.git/
-.idea/
-.env
+.gradle
+.idea
+*.iml
+build
+out
+*.log
+*.swp
+.DS_Store

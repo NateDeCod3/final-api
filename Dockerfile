@@ -1,17 +1,23 @@
-# Use an official Java runtime as the base image
-FROM eclipse-temurin:24-jdk
+# Use official OpenJDK base image
+FROM eclipse-temurin:17-jdk-jammy
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy the application files into the container
-COPY . .
+# Copy build files
+COPY build.gradle .
+COPY settings.gradle .
+COPY gradlew .
+COPY gradle gradle
 
-# Build the application (for Maven-based projects)
-RUN mvn clean package
+# Copy source code
+COPY src src
 
-# Expose the application port
+# Build the application
+RUN ./gradlew build --no-daemon
+
+# Expose the port your app runs on
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "target/SocialMedia-0.0.1-SNAPSHOT.jar"]
+# Command to run the application
+CMD ["java", "-jar", "build/libs/your-backend-app.jar"]
