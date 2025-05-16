@@ -1,20 +1,19 @@
 # Build stage
-FROM gradle:7.4.2-jdk17-alpine AS build
+FROM maven:3.8.6-openjdk-17 AS build
 WORKDIR /app
 
-# Copy gradle files first for caching
-COPY build.gradle settings.gradle gradlew /app/
-COPY gradle /app/gradle
-RUN ./gradlew dependencies
+# Copy just the POM first for better layer caching
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
 # Copy source and build
 COPY src /app/src
-RUN ./gradlew build --no-daemon
+RUN mvn package -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar /app/app.jar
+COPY --from=build /app/target/*.jar /app/app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
