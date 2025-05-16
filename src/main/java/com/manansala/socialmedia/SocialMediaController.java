@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/manansala")
-@CrossOrigin(origins = "${ALLOWED_ORIGINS:http://localhost:5173}")
+@CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
 public class SocialMediaController {
 
     @Autowired
