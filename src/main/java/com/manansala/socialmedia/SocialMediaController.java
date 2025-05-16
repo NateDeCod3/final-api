@@ -33,7 +33,7 @@ public class SocialMediaController {
     @GetMapping("/search/{keyword}")
     public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String keyword) {
         return ResponseEntity.ok(repository
-            .findByTitleContainingOrDescriptionContaining(keyword, keyword));
+            .findByTitleOrDescription(keyword, keyword));
     }
 
     @PutMapping("/{id}")
