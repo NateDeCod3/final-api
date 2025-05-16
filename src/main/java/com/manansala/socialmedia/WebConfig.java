@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig {
 
-    @Value("${ALLOWED_ORIGINS:https://final-ui-iw0x.onrender.com}")
+    @Value("${ALLOWED_ORIGINS:https://final-ui-iw0x.onrender.com,http://localhost:5173}")
     private String allowedOrigins;
 
     @Bean
@@ -21,8 +21,9 @@ public class WebConfig {
                         .allowedOrigins(allowedOrigins.split(","))
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .exposedHeaders("Access-Control-Allow-Origin")
-                        .allowCredentials(true);
+                        .exposedHeaders("Content-Disposition", "Access-Control-Allow-Origin")
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
         };
     }
