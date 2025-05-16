@@ -1,6 +1,8 @@
 package com.manansala.socialmedia;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,28 +34,40 @@ public class SocialMediaController {
     }
 
     // Get all posts
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts")
     public ResponseEntity<List<SocialMedia>> getAllPosts() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         List<SocialMedia> posts = socialMediaRepository.findAll();
-        return ResponseEntity.ok(posts);
+        return new ResponseEntity<>(posts, headers, HttpStatus.OK);
     }
 
     // Create a new post
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PostMapping("/post")
     public ResponseEntity<SocialMedia> addNewPost(@RequestBody SocialMedia post) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         SocialMedia savedPost = socialMediaRepository.save(post);
-        return ResponseEntity.ok(savedPost);
+        return new ResponseEntity<>(savedPost, headers, HttpStatus.OK);
     }
 
     // Update a post by ID
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PutMapping("/posts/{id}")
     public ResponseEntity<String> editPost(@PathVariable Long id, @RequestBody SocialMedia updatedPost) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         Optional<SocialMedia> optionalPost = socialMediaRepository.findById(id);
         if (!optionalPost.isPresent()) {
-            return ResponseEntity.badRequest().body("Post not found");
+            return new ResponseEntity<>("Post not found", headers, HttpStatus.BAD_REQUEST);
         }
 
         SocialMedia post = optionalPost.get();
@@ -62,45 +76,63 @@ public class SocialMediaController {
         post.setMediaUrl(updatedPost.getMediaUrl());
         socialMediaRepository.save(post);
 
-        return ResponseEntity.ok("Post with id " + id + " updated.");
+        return new ResponseEntity<>("Post with id " + id + " updated.", headers, HttpStatus.OK);
     }
 
     // Delete a post by ID
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         if (!socialMediaRepository.existsById(id)) {
-            return ResponseEntity.badRequest().body("Post not found");
+            return new ResponseEntity<>("Post not found", headers, HttpStatus.BAD_REQUEST);
         }
 
         socialMediaRepository.deleteById(id);
-        return ResponseEntity.ok("Post with id " + id + " deleted.");
+        return new ResponseEntity<>("Post with id " + id + " deleted.", headers, HttpStatus.OK);
     }
 
     // Get a post by ID
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts/{id}")
     public ResponseEntity<SocialMedia> getPostById(@PathVariable Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         Optional<SocialMedia> post = socialMediaRepository.findById(id);
-        return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return post.map(p -> new ResponseEntity<>(p, headers, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(null, headers, HttpStatus.NOT_FOUND));
     }
 
     // Search posts
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts/search/{key}")
     public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String key) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         List<SocialMedia> posts = socialMediaRepository.searchPosts(key);
-        return posts.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(posts);
+        return posts.isEmpty() ? new ResponseEntity<>(posts, headers, HttpStatus.NOT_FOUND)
+                               : new ResponseEntity<>(posts, headers, HttpStatus.OK);
     }
 
     // Bulk upload posts
-    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PostMapping("/bulk-posts")
     public ResponseEntity<String> addMultiplePosts(@RequestBody List<SocialMedia> posts) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Allow-Origin", "https://final-ui-iw0x.onrender.com");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        headers.add("Access-Control-Allow-Headers", "*");
+
         if (posts.isEmpty()) {
-            return ResponseEntity.badRequest().body("Post list is empty.");
+            return new ResponseEntity<>("Post list is empty.", headers, HttpStatus.BAD_REQUEST);
         }
         socialMediaRepository.saveAll(posts);
-        return ResponseEntity.ok("Successfully added " + posts.size() + " posts.");
+        return new ResponseEntity<>("Successfully added " + posts.size() + " posts.", headers, HttpStatus.OK);
     }
 }
