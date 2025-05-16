@@ -13,21 +13,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>SocialMedia</name>
     <description>SocialMedia</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
     <properties>
-        <java.version>24</java.version>
+        <java.version>17</java.version>
+        <postgresql.version>42.7.3</postgresql.version>
     </properties>
     <dependencies>
         <dependency>
@@ -38,10 +26,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -50,7 +38,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -59,5 +46,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
