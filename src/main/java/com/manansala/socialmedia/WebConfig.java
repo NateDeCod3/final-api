@@ -16,11 +16,14 @@ public class WebConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5174",
+                                "https://final-ui-iw0x.onrender.com",
                                 "https://final-api-o03a.onrender.com"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("*") // Allow all methods
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .exposedHeaders("*") // Expose all headers
+                        .allowCredentials(true)
+                        .maxAge(3600); // Cache preflight response for 1 hour
             }
         };
     }
