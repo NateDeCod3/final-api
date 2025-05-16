@@ -3,6 +3,7 @@ package com.manansala.socialmedia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,12 +12,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/manansala")
-@CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
+@CrossOrigin(origins = "https://final-ui-iw0x.onrender.com") // Global CORS for all endpoints
 public class SocialMediaController {
 
     @Autowired
     private SocialMediaRepository socialMediaRepository;
-    
+
     @Autowired
     private DataSource dataSource;
 
@@ -24,15 +25,14 @@ public class SocialMediaController {
     @GetMapping("/test-db")
     public ResponseEntity<String> testDbConnection() {
         try (Connection conn = dataSource.getConnection()) {
-            return ResponseEntity.ok("Database connection successful to: " + 
-                   conn.getMetaData().getURL());
+            return ResponseEntity.ok("Database connection successful to: " + conn.getMetaData().getURL());
         } catch (SQLException e) {
-            return ResponseEntity.internalServerError()
-                   .body("Database connection failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Database connection failed: " + e.getMessage());
         }
     }
 
     // Get all posts
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts")
     public ResponseEntity<List<SocialMedia>> getAllPosts() {
         List<SocialMedia> posts = socialMediaRepository.findAll();
@@ -40,6 +40,7 @@ public class SocialMediaController {
     }
 
     // Create a new post
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PostMapping("/post")
     public ResponseEntity<SocialMedia> addNewPost(@RequestBody SocialMedia post) {
         SocialMedia savedPost = socialMediaRepository.save(post);
@@ -47,6 +48,7 @@ public class SocialMediaController {
     }
 
     // Update a post by ID
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PutMapping("/posts/{id}")
     public ResponseEntity<String> editPost(@PathVariable Long id, @RequestBody SocialMedia updatedPost) {
         Optional<SocialMedia> optionalPost = socialMediaRepository.findById(id);
@@ -64,6 +66,7 @@ public class SocialMediaController {
     }
 
     // Delete a post by ID
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         if (!socialMediaRepository.existsById(id)) {
@@ -75,6 +78,7 @@ public class SocialMediaController {
     }
 
     // Get a post by ID
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts/{id}")
     public ResponseEntity<SocialMedia> getPostById(@PathVariable Long id) {
         Optional<SocialMedia> post = socialMediaRepository.findById(id);
@@ -82,6 +86,7 @@ public class SocialMediaController {
     }
 
     // Search posts
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @GetMapping("/posts/search/{key}")
     public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String key) {
         List<SocialMedia> posts = socialMediaRepository.searchPosts(key);
@@ -89,6 +94,7 @@ public class SocialMediaController {
     }
 
     // Bulk upload posts
+    @CrossOrigin(origins = "https://final-ui-iw0x.onrender.com")
     @PostMapping("/bulk-posts")
     public ResponseEntity<String> addMultiplePosts(@RequestBody List<SocialMedia> posts) {
         if (posts.isEmpty()) {
