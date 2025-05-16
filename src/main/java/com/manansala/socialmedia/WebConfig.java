@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig {
 
-    @Value("${ALLOWED_ORIGINS:https://final-ui-iw0x.onrender.com}") // ✅ Updated to deployed frontend URL
+    @Value("${ALLOWED_ORIGINS:https://final-ui-iw0x.onrender.com}")
     private String allowedOrigins;
 
     @Bean
@@ -21,6 +21,7 @@ public class WebConfig {
                         .allowedOrigins(allowedOrigins.split(","))
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
+                        .exposedHeaders("Access-Control-Allow-Origin")
                         .allowCredentials(true);
             }
         };
