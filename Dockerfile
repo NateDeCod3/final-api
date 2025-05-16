@@ -1,5 +1,5 @@
-# Build stage
-FROM maven:3.8.6-openjdk-17 AS build
+# Build stage - using official Maven image with JDK 17
+FROM maven:3.8.7-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copy just the POM first for better layer caching
