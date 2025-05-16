@@ -6,35 +6,32 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/manansala")
+@RequestMapping("/api/posts")
 public class SocialMediaController {
 
     @Autowired
     private SocialMediaRepository socialMediaRepository;
 
-    @GetMapping("/posts")
+    @GetMapping
     public ResponseEntity<List<SocialMedia>> getAllPosts() {
         return ResponseEntity.ok(socialMediaRepository.findAll());
     }
 
-    @PostMapping("/posts")
-    public ResponseEntity<SocialMedia> addNewPost(@RequestBody SocialMedia post) {
+    @PostMapping
+    public ResponseEntity<SocialMedia> createPost(@RequestBody SocialMedia post) {
         return ResponseEntity.ok(socialMediaRepository.save(post));
     }
 
-    @PostMapping("/bulk-posts")
-    public ResponseEntity<List<SocialMedia>> addBulkPosts(@RequestBody List<SocialMedia> posts) {
-        return ResponseEntity.ok(socialMediaRepository.saveAll(posts));
-    }
-
-    @GetMapping("/posts/search/{key}")
-    public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String key) {
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<SocialMedia>> searchPosts(@PathVariable String keyword) {
         return ResponseEntity.ok(socialMediaRepository
-            .findByTitleContainingOrDescriptionContaining(key, key));
+            .findByTitleContainingOrDescriptionContaining(keyword, keyword));
     }
 
-    @PutMapping("/posts/{id}")
-    public ResponseEntity<SocialMedia> editPost(@PathVariable Long id, @RequestBody SocialMedia updatedPost) {
+    @PutMapping("/{id}")
+    public ResponseEntity<SocialMedia> updatePost(
+            @PathVariable Long id,
+            @RequestBody SocialMedia updatedPost) {
         return socialMediaRepository.findById(id)
             .map(post -> {
                 post.setTitle(updatedPost.getTitle());
@@ -45,7 +42,7 @@ public class SocialMediaController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         return socialMediaRepository.findById(id)
             .map(post -> {
