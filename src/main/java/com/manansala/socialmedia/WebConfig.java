@@ -19,11 +19,11 @@ public class WebConfig {
                                 "https://final-ui-iw0x.onrender.com",
                                 "https://final-api-o03a.onrender.com"
                         )
-                        .allowedMethods("*")
+                        .allowedMethods("*") // Allow all methods
                         .allowedHeaders("*")
-                        .exposedHeaders("*")
+                        .exposedHeaders("*") // Expose all headers
                         .allowCredentials(true)
-                        .maxAge(3600);
+                        .maxAge(3600); // Cache preflight response for 1 hour
             }
         };
     }
