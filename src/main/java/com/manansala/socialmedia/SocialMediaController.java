@@ -60,4 +60,9 @@ public class SocialMediaController {
             })
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    
+    @PostMapping("/bulk")
+    public ResponseEntity<List<SocialMedia>> createBulkPosts(@Valid @RequestBody List<SocialMedia> posts) {
+        return ResponseEntity.ok(repository.saveAll(posts));
+    }
 }
